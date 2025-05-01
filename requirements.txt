@@ -1,0 +1,15 @@
+# Core Requirements
+streamlit==1.32.0        # Web app framework
+requests==2.31.0         # API calls to Riot servers
+python-dotenv==1.0.0     # Environment variable management
+
+# Data Analysis
+pandas==2.1.4            # Data manipulation
+numpy==1.26.2            # Numerical operations
+
+# Visualization
+matplotlib==3.8.2        # Plotting library
+seaborn==0.13.0          # Statistical graphics
+
+# Date Handling
+python-dateutil==2.8.2   # Date/time utilities
