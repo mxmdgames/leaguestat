@@ -51,7 +51,7 @@ TIER_BENCHMARKS = {
 PRO_PLAYERS = {
     "Double Lift": {"game_name": "peng yiliang", "tag_line": "NA1"},
     "Sushee": {"game_name": "NA Sushee", "tag_line": "NA1"},
-    "Spica": {"game_name": "NA Spica", "tag_line": "NA1"},
+    "Spica": {"game_name": "Spica1", "tag_line": "NA1"},
     "Kelpo": {"game_name": "NA Kelpo", "tag_line": "NA1"},
     "BLUE Levitate": {"game_name": "BLUE Levitate", "tag_line": "na1"},
     # Add more pros as needed
