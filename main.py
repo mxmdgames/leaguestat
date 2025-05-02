@@ -27,7 +27,6 @@ QUEUE_IDS = {
 # Preset pro players for easy comparison
 PRO_PLAYERS = {
     "Double Lift": {"game_name": "peng yiliang", "tag_line": "NA1"},
-    "Qwacker": {"game_name": "Qwacker", "tag_line": "NA1"},
     "Spica": {"game_name": "Spica1", "tag_line": "NA1"},
     "Sushee": {"game_name": "Sushee", "tag_line": "NA1"},
     "Levitate": {"game_name": "Levitate", "tag_line": "NA1"},
