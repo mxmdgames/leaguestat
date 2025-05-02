@@ -49,7 +49,7 @@ TIER_BENCHMARKS = {
 
 # Preset pro players for easy comparison
 PRO_PLAYERS = {
-    "Faker": {"game_name": "Faker", "tag_line": "KR1"},
+    "Double Lift": {"game_name": "peng yiliang", "tag_line": "NA1"},
     "Caps": {"game_name": "Caps", "tag_line": "EUW"},
     "Bjergsen": {"game_name": "Bjergsen", "tag_line": "NA1"},
     "Chovy": {"game_name": "Chovy", "tag_line": "KR1"},
