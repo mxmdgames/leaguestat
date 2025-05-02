@@ -24,29 +24,6 @@ QUEUE_IDS = {
     450: "ARAM",
 }
 
-# Keeping tier benchmarks as a fallback option
-TIER_BENCHMARKS = {
-    'Iron': {
-        'KDA': 0.25,  # 1.5-2.0 → midpoint 1.75 normalized to 6.0 scale
-        'CS/Min': 0.35,  # 4-5 → midpoint 4.5 normalized to 13 scale
-        'Vision': 0.17,  # 0.5-1.0 → midpoint 0.75 normalized to 4.5 scale
-        'Damage': 0.29,  # 15-20% → midpoint 17.5% normalized to 60% scale
-        'Gold': 0.43,  # 300-350 → midpoint 325 normalized to 750 scale
-        'KP%': 0.47,  # 40-50% → midpoint 45% normalized to 95% scale
-        'Dmg%': 0.25  # 15-20% → midpoint 17.5% normalized to 70% scale
-    },
-    # Other tiers remain the same...
-    'Challenger': {
-        'KDA': 1.0,  # 6.0+
-        'CS/Min': 1.0,  # 13+
-        'Vision': 1.0,  # 4.5+
-        'Damage': 0.83,  # 45-55% → 50%
-        'Gold': 1.0,  # 750+
-        'KP%': 0.89,  # 85-95% → 90%
-        'Dmg%': 0.75  # 45-55% → 50%
-    }
-}
-
 # Preset pro players for easy comparison
 PRO_PLAYERS = {
     "Double Lift": {"game_name": "peng yiliang", "tag_line": "NA1"},
@@ -257,7 +234,7 @@ def analyze_stats(stats_list):
     }
 
 
-# NEW: Function to fetch comparison player's data
+# Function to fetch comparison player's data
 def get_comparison_player_stats(game_name, tag_line, match_count=10):
     try:
         # Fetch account info
@@ -309,9 +286,9 @@ def normalize_to_percent(value, metric):
     return min(value / max_values[metric], 1.0)
 
 
-# MODIFIED: Updated to support comparing to other summoners
+# Updated to only compare with other summoners
 def draw_comparison_radar(player_stats, comparison_data):
-    """Create radar chart comparing player to other summoners or tier"""
+    """Create radar chart comparing player to other summoners"""
     # Player stats normalized to 0-1 scale
     player_normalized = {
         'KDA': normalize_to_percent(player_stats['avg_kda'], 'KDA'),
@@ -346,47 +323,33 @@ def draw_comparison_radar(player_stats, comparison_data):
             color='#1f77b4', label='Your Stats')
     ax.fill(angles, player_values, '#1f77b4', alpha=0.25)
 
-    # Plot comparison data (can be multiple players or a tier)
+    # Plot comparison data (other players)
     colors = ['#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
     legend_handles = [Line2D([0], [0], color='#1f77b4', lw=2, label='Your Stats')]
 
-    # If comparison is a tier benchmark
-    if isinstance(comparison_data, str):
-        benchmark = TIER_BENCHMARKS[comparison_data]
-        benchmark_values = list(benchmark.values()) + [benchmark['KDA']]
-        ax.plot(angles, benchmark_values, linewidth=2, linestyle='solid',
-                color=colors[0], label=f'{comparison_data} Average')
-        ax.fill(angles, benchmark_values, colors[0], alpha=0.1)
-        legend_handles.append(Line2D([0], [0], color=colors[0], lw=2, label=f'{comparison_data} Average'))
+    # Plot other summoners
+    for i, (name, comp_stats) in enumerate(comparison_data.items()):
+        if comp_stats and i < len(colors):
+            color_idx = i % len(colors)
+            comp_normalized = {
+                'KDA': normalize_to_percent(comp_stats['avg_kda'], 'KDA'),
+                'CS/Min': normalize_to_percent(comp_stats['avg_cs_per_min'], 'CS/Min'),
+                'Vision': normalize_to_percent(comp_stats['avg_vision_score'], 'Vision'),
+                'Damage': normalize_to_percent(comp_stats['avg_damage'], 'Damage'),
+                'Gold': normalize_to_percent(comp_stats['avg_gold'], 'Gold'),
+                'KP%': normalize_to_percent(comp_stats['avg_kill_participation'], 'KP%'),
+                'Dmg%': normalize_to_percent(comp_stats['avg_damage_share'], 'Dmg%')
+            }
+            comp_values = list(comp_normalized.values()) + [comp_normalized['KDA']]
 
-    # If comparison is other summoners
-    else:
-        for i, (name, comp_stats) in enumerate(comparison_data.items()):
-            if comp_stats and i < len(colors):
-                color_idx = i % len(colors)
-                comp_normalized = {
-                    'KDA': normalize_to_percent(comp_stats['avg_kda'], 'KDA'),
-                    'CS/Min': normalize_to_percent(comp_stats['avg_cs_per_min'], 'CS/Min'),
-                    'Vision': normalize_to_percent(comp_stats['avg_vision_score'], 'Vision'),
-                    'Damage': normalize_to_percent(comp_stats['avg_damage'], 'Damage'),
-                    'Gold': normalize_to_percent(comp_stats['avg_gold'], 'Gold'),
-                    'KP%': normalize_to_percent(comp_stats['avg_kill_participation'], 'KP%'),
-                    'Dmg%': normalize_to_percent(comp_stats['avg_damage_share'], 'Dmg%')
-                }
-                comp_values = list(comp_normalized.values()) + [comp_normalized['KDA']]
-
-                ax.plot(angles, comp_values, linewidth=2, linestyle='solid',
-                        color=colors[color_idx], label=name)
-                ax.fill(angles, comp_values, colors[color_idx], alpha=0.1)
-                legend_handles.append(Line2D([0], [0], color=colors[color_idx], lw=2, label=name))
+            ax.plot(angles, comp_values, linewidth=2, linestyle='solid',
+                    color=colors[color_idx], label=name)
+            ax.fill(angles, comp_values, colors[color_idx], alpha=0.1)
+            legend_handles.append(Line2D([0], [0], color=colors[color_idx], lw=2, label=name))
 
     # Add title and legend
-    if isinstance(comparison_data, str):
-        plt.title(f'Your Performance vs {comparison_data} Averages\n(Normalized to max expected values)',
-                  size=14, y=1.1)
-    else:
-        plt.title(f'Your Performance vs Other Summoners\n(Normalized to max expected values)',
-                  size=14, y=1.1)
+    plt.title(f'Your Performance vs Other Summoners\n(Normalized to max expected values)',
+              size=14, y=1.1)
 
     plt.legend(handles=legend_handles, loc='upper right', bbox_to_anchor=(1.3, 1.1))
 
@@ -865,7 +828,7 @@ def display_item_analysis(analysis, items_data, version):
                         )
 
 
-# --- NEW FUNCTIONS ---
+# Display comparison summary
 def display_comparison_summary(comparison_data):
     """Display summary of comparison players' stats"""
     st.subheader("⚔️ Comparison Summoners")
@@ -890,7 +853,7 @@ def display_comparison_summary(comparison_data):
 # --- STREAMLIT UI ---
 st.title("League of Legends Match Analyzer 🔍")
 
-# MODIFIED: UI to support comparison players
+# Updated UI to remove tier comparison
 with st.form("summoner_form"):
     col1, col2 = st.columns([1, 1])
 
@@ -900,50 +863,35 @@ with st.form("summoner_form"):
         match_count = st.slider("Number of Recent Matches", min_value=5, max_value=50, value=20)
 
     with col2:
-        # Comparison options
-        comparison_type = st.radio(
-            "Compare with:",
-            ["Other Summoners", "Tier Benchmarks"],
-            index=0
-        )
+        # Comparison player options
+        st.markdown("### Add Comparison Summoners")
 
-        if comparison_type == "Tier Benchmarks":
-            compare_tier = st.selectbox(
-                "Compare your stats to tier:",
-                list(TIER_BENCHMARKS.keys()),
-                index=4  # Default to Platinum
-            )
-            comparison_players = {}
+        # Option to select from preset pro players
+        use_preset = st.checkbox("Use preset pro player")
+
+        if use_preset:
+            pro_player = st.selectbox("Select a pro player", list(PRO_PLAYERS.keys()))
+            comp_name = PRO_PLAYERS[pro_player]["game_name"]
+            comp_tag = PRO_PLAYERS[pro_player]["tag_line"]
         else:
-            # Comparison player options
-            st.markdown("### Add Comparison Summoners")
+            # Manual entry
+            comp_name = st.text_input("Comparison Game Name", value="")
+            comp_tag = st.text_input("Comparison Tag Line", value="")
 
-            # Option to select from preset pro players
-            use_preset = st.checkbox("Use preset pro player")
+        # Option to add a second comparison player
+        add_second = st.checkbox("Add second comparison")
 
-            if use_preset:
-                pro_player = st.selectbox("Select a pro player", list(PRO_PLAYERS.keys()))
-                comp_name = PRO_PLAYERS[pro_player]["game_name"]
-                comp_tag = PRO_PLAYERS[pro_player]["tag_line"]
+        if add_second:
+            use_preset2 = st.checkbox("Use preset pro player for second comparison")
+
+            if use_preset2:
+                pro_player2 = st.selectbox("Select second pro player", list(PRO_PLAYERS.keys()), key="pro2")
+                comp_name2 = PRO_PLAYERS[pro_player2]["game_name"]
+                comp_tag2 = PRO_PLAYERS[pro_player2]["tag_line"]
             else:
-                # Manual entry
-                comp_name = st.text_input("Comparison Game Name", value="")
-                comp_tag = st.text_input("Comparison Tag Line", value="")
-
-            # Option to add a second comparison player
-            add_second = st.checkbox("Add second comparison")
-
-            if add_second:
-                use_preset2 = st.checkbox("Use preset pro player for second comparison")
-
-                if use_preset2:
-                    pro_player2 = st.selectbox("Select second pro player", list(PRO_PLAYERS.keys()), key="pro2")
-                    comp_name2 = PRO_PLAYERS[pro_player2]["game_name"]
-                    comp_tag2 = PRO_PLAYERS[pro_player2]["tag_line"]
-                else:
-                    # Manual entry for second player
-                    comp_name2 = st.text_input("Second Comparison Game Name", value="")
-                    comp_tag2 = st.text_input("Second Comparison Tag Line", value="")
+                # Manual entry for second player
+                comp_name2 = st.text_input("Second Comparison Game Name", value="")
+                comp_tag2 = st.text_input("Second Comparison Tag Line", value="")
 
     submitted = st.form_submit_button("Analyze")
 
@@ -982,39 +930,38 @@ if submitted:
         # Fetch item data for visualization
         items_data, version = get_item_data()
 
-        # MODIFIED: Handle comparison data fetching
+        # Handle comparison data fetching
         comparison_data = {}
 
-        if comparison_type == "Other Summoners":
-            # First comparison player
-            if use_preset:
-                comp_display_name = pro_player
+        # First comparison player
+        if use_preset:
+            comp_display_name = pro_player
+        else:
+            comp_display_name = f"{comp_name}#{comp_tag}"
+
+        if comp_name and comp_tag:
+            with st.spinner(f"Fetching comparison data for {comp_display_name}..."):
+                comp_data = get_comparison_player_stats(comp_name, comp_tag, 10)
+                if comp_data and comp_data['stats']:
+                    comparison_data[comp_display_name] = comp_data['stats']
+
+        # Second comparison player (if added)
+        if add_second and comp_name2 and comp_tag2:
+            if use_preset2:
+                comp_display_name2 = pro_player2
             else:
-                comp_display_name = f"{comp_name}#{comp_tag}"
+                comp_display_name2 = f"{comp_name2}#{comp_tag2}"
 
-            if comp_name and comp_tag:
-                with st.spinner(f"Fetching comparison data for {comp_display_name}..."):
-                    comp_data = get_comparison_player_stats(comp_name, comp_tag, 10)
-                    if comp_data and comp_data['stats']:
-                        comparison_data[comp_display_name] = comp_data['stats']
-
-            # Second comparison player (if added)
-            if add_second and comp_name2 and comp_tag2:
-                if use_preset2:
-                    comp_display_name2 = pro_player2
-                else:
-                    comp_display_name2 = f"{comp_name2}#{comp_tag2}"
-
-                with st.spinner(f"Fetching comparison data for {comp_display_name2}..."):
-                    comp_data2 = get_comparison_player_stats(comp_name2, comp_tag2, 10)
-                    if comp_data2 and comp_data2['stats']:
-                        comparison_data[comp_display_name2] = comp_data2['stats']
+            with st.spinner(f"Fetching comparison data for {comp_display_name2}..."):
+                comp_data2 = get_comparison_player_stats(comp_name2, comp_tag2, 10)
+                if comp_data2 and comp_data2['stats']:
+                    comparison_data[comp_display_name2] = comp_data2['stats']
 
         # Display stat summary
         display_summary(analysis)
 
         # Display comparison summoners if available
-        if comparison_type == "Other Summoners" and comparison_data:
+        if comparison_data:
             display_comparison_summary(comparison_data)
 
         # Create tabs for different analysis sections
@@ -1030,11 +977,11 @@ if submitted:
             display_item_analysis(analysis, items_data, version)
 
         with tab3:
-            # Radar chart comparison (modified to support comparison players)
+            # Radar chart comparison (only for other summoners now)
             st.subheader("🎯 Performance Comparison")
 
-            if comparison_type == "Tier Benchmarks":
-                radar_fig = draw_comparison_radar(analysis['overall'], compare_tier)
+            if comparison_data:
+                radar_fig = draw_comparison_radar(analysis['overall'], comparison_data)
                 st.pyplot(radar_fig)
 
                 with st.expander("How to read the radar chart"):
@@ -1047,31 +994,12 @@ if submitted:
                     - **KP%**: Kill participation percentage (0-100%)
                     - **Dmg%**: Percentage of team's total damage (0-50%)
 
-                    The blue area shows your performance, while the orange area shows the 
-                    average for the selected tier. Areas where your blue extends beyond 
-                    the orange indicate you're performing above that tier's average.
+                    The blue area shows your performance, while the other colored areas show the 
+                    performance of comparison summoners. Areas where your blue extends beyond 
+                    the other colors indicate you're performing better in those categories.
                     """)
             else:
-                if comparison_data:
-                    radar_fig = draw_comparison_radar(analysis['overall'], comparison_data)
-                    st.pyplot(radar_fig)
-
-                    with st.expander("How to read the radar chart"):
-                        st.markdown("""
-                        - **KDA**: Kill/Death/Assist ratio (normalized to 10.0)
-                        - **CS/Min**: Creep Score per minute (normalized to 12.0)
-                        - **Vision**: Vision score (normalized to 100)
-                        - **Damage**: Average damage to champions (normalized to 40,000)
-                        - **Gold**: Average gold earned (normalized to 40,000)
-                        - **KP%**: Kill participation percentage (0-100%)
-                        - **Dmg%**: Percentage of team's total damage (0-50%)
-
-                        The blue area shows your performance, while the other colored areas show the 
-                        performance of comparison summoners. Areas where your blue extends beyond 
-                        the other colors indicate you're performing better in those categories.
-                        """)
-                else:
-                    st.warning("No comparison data available. Please add valid summoners for comparison.")
+                st.warning("No comparison data available. Please add valid summoners for comparison.")
 
         st.subheader("📥 Export Data")
         csv = analysis['df'].to_csv(index=False).encode()
