@@ -12,19 +12,17 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pathlib import Path
 
-# Serve riot.txt directly
-def serve_riot_txt():
+# Create a direct route for riot.txt
+if 'riot.txt' in st.experimental_get_query_params() or st.url_path_name == 'riot.txt':
+    # Option 1: Serve from file
     file_path = Path(__file__).parent / "static" / "riot.txt"
     if file_path.exists():
         with open(file_path, "r") as f:
-            st.markdown(f.read(), unsafe_allow_html=True)
+            st.write(f.read())
     else:
-        st.error("riot.txt not found!")
-
-# Updated query params check
-if "riot.txt" in st.query_params.get("_filename", []):
-    serve_riot_txt()
-    st.stop()  # Don't show the rest of the app
+        # Option 2: Hard-code the content (as backup)
+        st.write("148aef63-3a72-4227-beca-5009049493f8")
+    st.stop()
 
 
 # Load API Key
