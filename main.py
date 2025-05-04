@@ -12,13 +12,18 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pathlib import Path
 
-# Riot.txt verification handler - MUST BE FIRST IN FILE
-if os.environ.get("SCRIPT_NAME", "").endswith("riot.txt"):
+# Serve riot.txt directly
+def serve_riot_txt():
     file_path = Path(__file__).parent / "static" / "riot.txt"
     if file_path.exists():
         with open(file_path, "r") as f:
-            st.write(f.read())
-        st.stop()  # Critical - prevents app from loading
+            st.markdown(f.read(), unsafe_allow_html=True)
+    else:
+        st.error("riot.txt not found!")
+
+if "riot.txt" in st.experimental_get_query_params().get("_filename", []):
+    serve_riot_txt()
+    st.stop()  # Don't show the rest of the app
 
 
 # Load API Key
