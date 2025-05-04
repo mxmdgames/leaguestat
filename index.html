@@ -10,6 +10,10 @@
             margin: 0;
             padding: 0;
             background-color: #0a1428;
+            background-image: url('https://i.postimg.cc/j5c8THdM/graphs.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: #cdfafa;
             display: flex;
             flex-direction: column;
@@ -85,13 +89,14 @@
         }
         
         .feature-card {
-            background-color: #091428;
+            background-color: rgba(9, 20, 40, 0.85);
             border: 1px solid #0ac8b9;
             border-radius: 8px;
             padding: 25px;
             max-width: 250px;
             text-align: center;
             transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
         }
         
         .feature-card:hover {
@@ -140,6 +145,11 @@
         <p>Unlock deeper insights into your League of Legends performance with comprehensive match analysis, item build statistics, and direct comparisons with pro players.</p>
         
         <a href="https://leaguestat.streamlit.app/" class="cta-button">Launch Application</a>
+        
+        <!-- Routes for verification -->
+        <div style="display: none;">
+            <a href="/riot.txt" id="riot-link">riot.txt verification</a>
+        </div>
         
         <div class="features">
             <div class="feature-card">
