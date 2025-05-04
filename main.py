@@ -12,16 +12,14 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pathlib import Path
 
-
-# Riot.txt verification handler
-if os.path.basename(__file__) == "riot.txt" or st.query_params.get("_riot_verify"):
+# Handle direct riot.txt requests
+current_path = os.environ.get("REQUEST_URI", "")
+if current_path.endswith("riot.txt"):
     file_path = Path(__file__).parent / "static" / "riot.txt"
     if file_path.exists():
-        with open(file_path, "r") as f:
-            st.markdown(f.read(), unsafe_allow_html=True)
-        st.stop()  # Stop normal app execution
-    else:
-        st.error("riot.txt not found in static folder!")
+        st.header(" ")  # Empty header
+        st.code(open(file_path).read(), language="text")
+        st.stop()
 
 
 # Load API Key
