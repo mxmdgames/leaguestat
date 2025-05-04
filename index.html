@@ -30,27 +30,10 @@
             font-size: 28px;
             font-weight: bold;
             color: #c8aa6e;
-            text-align: center;
-            margin-bottom: 20px;
         }
         
         .highlight {
             color: #0ac8b9;
-        }
-        
-        /* Banner styling */
-        .banner-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-        
-        .banner-gif {
-            width: 100%;
-            max-width: 1000px;
-            object-fit: cover;
         }
         
         main {
@@ -140,28 +123,21 @@
             color: #a09b8c;
         }
         
-        /* Verification file link - hidden visually but still accessible */
+        /* Verification file link - hidden visually but accessible */
         .verification-link {
-            color: #091428;
-            font-size: 1px;
+            color: #0a1428;
+            font-size: 0.1px;
+            position: absolute;
             opacity: 0.01;
         }
     </style>
-    
-    <!-- Special route handling for riot.txt verification -->
-    <script>
-        // Check if the URL is requesting riot.txt
-        if (window.location.pathname.toLowerCase() === '/riot.txt') {
-            window.location.href = 'https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt';
-        }
-    </script>
 </head>
 <body>
+    <!-- Riot Games API Verification Link -->
+    <a href="https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt" class="verification-link">riot.txt</a>
+    
     <header>
         <div class="logo">League<span class="highlight">Stat</span></div>
-        <div class="banner-container">
-            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGNqMHYzdWg4M3JodzM2Nmt3ZnYwMWNlNDhhOWd5cXBmYXQ4em0ybSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c2mq9FiBHjmXt8bKBG/giphy.gif" alt="League of Legends Stats Banner" class="banner-gif">
-        </div>
     </header>
     
     <main>
@@ -170,8 +146,10 @@
         
         <a href="https://leaguestat.streamlit.app/" class="cta-button">Launch Application</a>
         
-        <!-- Hidden but accessible verification link -->
-        <a href="https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt" class="verification-link">riot.txt</a>
+        <!-- Routes for verification -->
+        <div style="display: none;">
+            <a href="/riot.txt" id="riot-link">riot.txt verification</a>
+        </div>
         
         <div class="features">
             <div class="feature-card">
