@@ -4,176 +4,844 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LeagueStat - League of Legends Match Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary: #0ac8b9;
+            --gold: #c8aa6e;
+            --gold-hover: #e5d8b0;
+            --dark-blue: #091428;
+            --blue: #0a1428;
+            --light-text: #f0e6d2;
+            --body-text: #cdfafa;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            background-color: #0a1428;
-            background-image: url('https://i.postimg.cc/j5c8THdM/graphs.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #cdfafa;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--blue);
+            color: var(--body-text);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.postimg.cc/j5c8THdM/graphs.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
         }
         
         header {
-            background-color: #091428;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            background-color: rgba(9, 20, 40, 0.9);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(10, 200, 185, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
         .logo {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            color: #c8aa6e;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 10px rgba(200, 170, 110, 0.3);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--primary);
         }
         
         .highlight {
-            color: #0ac8b9;
+            color: var(--primary);
+            position: relative;
+        }
+        
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 0;
+            position: relative;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .banner-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 0;
+        }
+        
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(9,20,40,0) 0%, rgba(9,20,40,0.8) 100%);
+            z-index: 2;
+        }
+        
+        .banner-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8);
+        }
+        
+        .banner-text {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            text-align: center;
+            width: 80%;
+        }
+        
+        .banner-text h2 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--light-text);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .banner-text p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            margin-bottom: 25px;
         }
         
         main {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+            padding: 80px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
             text-align: center;
+            margin-bottom: 60px;
+            position: relative;
         }
         
-        h1 {
+        .section-title h2 {
             font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #f0e6d2;
+            color: var(--light-text);
+            display: inline-block;
+            position: relative;
         }
         
-        p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
         }
         
         .cta-button {
             display: inline-block;
-            background: linear-gradient(to bottom, #c8aa6e, #785a28);
-            color: #0a1428;
+            background: linear-gradient(to bottom, var(--gold), #785a28);
+            color: var(--dark-blue);
             font-size: 1.2rem;
             font-weight: bold;
             padding: 15px 40px;
             border-radius: 4px;
             text-decoration: none;
             transition: all 0.3s ease;
-            margin-top: 20px;
-            border: 2px solid #c8aa6e;
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gold-hover), #c89b3c);
+            transition: all 0.5s ease;
+            z-index: -1;
         }
         
         .cta-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(to bottom, #e5d8b0, #c89b3c);
+            color: var(--dark-blue);
+        }
+        
+        .cta-button:hover::before {
+            width: 100%;
         }
         
         .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 50px;
-            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
         }
         
         .feature-card {
             background-color: rgba(9, 20, 40, 0.85);
-            border: 1px solid #0ac8b9;
+            border: 1px solid var(--primary);
             border-radius: 8px;
-            padding: 25px;
-            max-width: 250px;
+            padding: 30px;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
             backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(10, 200, 185, 0.1) 0%, transparent 100%);
+            transition: all 0.5s ease;
         }
         
         .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(10, 200, 185, 0.15);
+        }
+        
+        .feature-card:hover::before {
+            top: 0;
         }
         
         .feature-icon {
-            font-size: 36px;
-            margin-bottom: 15px;
-            color: #0ac8b9;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(10, 200, 185, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: var(--primary);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            background-color: rgba(10, 200, 185, 0.2);
         }
         
         .feature-title {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--light-text);
+        }
+        
+        .feature-description {
+            color: var(--body-text);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .stats-section {
+            margin-top: 100px;
+            position: relative;
+            padding: 60px 0;
+        }
+        
+        .stats-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(9, 20, 40, 0.7);
+            z-index: -1;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
             margin-bottom: 10px;
-            color: #f0e6d2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stat-number i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        .stat-text {
+            font-size: 1.1rem;
+            color: var(--light-text);
+        }
+        
+        .testimonials {
+            margin-top: 100px;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .testimonial-card {
+            background-color: rgba(9, 20, 40, 0.85);
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--body-text);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-blue);
+            font-weight: bold;
+        }
+        
+        .testimonial-info h4 {
+            color: var(--light-text);
+            margin-bottom: 5px;
+        }
+        
+        .testimonial-info p {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+        
+        .cta-section {
+            margin-top: 100px;
+            text-align: center;
+            padding: 60px 20px;
+            background-color: rgba(9, 20, 40, 0.8);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 200, 185, 0.1) 0%, transparent 100%);
+            z-index: -1;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+        
+        .cta-description {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            color: var(--body-text);
         }
         
         footer {
-            background-color: #091428;
-            padding: 20px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #a09b8c;
+            background-color: var(--dark-blue);
+            padding: 60px 20px 30px;
+            margin-top: 80px;
+            position: relative;
         }
         
-        /* Verification file link - hidden visually but accessible */
-        .verification-link {
-            color: #0a1428;
-            font-size: 0.1px;
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-column h3 {
+            color: var(--light-text);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
             position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: var(--body-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(10, 200, 185, 0.1);
+            border-radius: 50%;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: var(--dark-blue);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(200, 170, 110, 0.2);
+            color: #a09b8c;
+            font-size: 0.9rem;
+        }
+        
+        .verification-link {
+            color: var(--dark-blue);
+            font-size: 1px;
             opacity: 0.01;
         }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .banner-text h2 {
+                font-size: 2rem;
+            }
+            
+            .banner-container {
+                height: 300px;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
     </style>
+    
+    <!-- Special route handling for riot.txt verification -->
+    <script>
+        // Check if the URL is requesting riot.txt
+        if (window.location.pathname.toLowerCase() === '/riot.txt') {
+            window.location.href = 'https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt';
+        }
+        
+        // Particle animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const body = document.querySelector('body');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const posX = Math.random() * window.innerWidth;
+                const posY = Math.random() * window.innerHeight;
+                
+                particle.style.left = posX + 'px';
+                particle.style.top = posY + 'px';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                body.appendChild(particle);
+                
+                // Animation
+                animateParticle(particle);
+            }
+            
+            function animateParticle(particle) {
+                const duration = Math.random() * 20000 + 10000; // 10-30 seconds
+                const targetX = Math.random() * window.innerWidth;
+                const targetY = Math.random() * window.innerHeight;
+                
+                particle.animate([
+                    { transform: 'translate(0, 0)' },
+                    { transform: `translate(${targetX - parseFloat(particle.style.left)}px, ${targetY - parseFloat(particle.style.top)}px)` }
+                ], {
+                    duration: duration,
+                    easing: 'ease-in-out',
+                    iterations: Infinity,
+                    direction: 'alternate'
+                });
+            }
+        });
+    </script>
 </head>
 <body>
-    <!-- Riot Games API Verification Link -->
-    <a href="https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt" class="verification-link">riot.txt</a>
-    
     <header>
-        <div class="logo">League<span class="highlight">Stat</span></div>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                League<span class="highlight">Stat</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Stats</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                    <li><a href="https://leaguestat.streamlit.app/">Launch App</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
     
-    <main>
-        <h1>League of Legends Match Analyzer</h1>
-        <p>Unlock deeper insights into your League of Legends performance with comprehensive match analysis, item build statistics, and direct comparisons with pro players.</p>
-        
-        <a href="https://leaguestat.streamlit.app/" class="cta-button">Launch Application</a>
-        
-        <!-- Routes for verification -->
-        <div style="display: none;">
-            <a href="/riot.txt" id="riot-link">riot.txt verification</a>
+    <div class="banner-container">
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGNqMHYzdWg4M3JodzM2Nmt3ZnYwMWNlNDhhOWd5cXBmYXQ4em0ybSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c2mq9FiBHjmXt8bKBG/giphy.gif" alt="League of Legends Stats Banner" class="banner-gif">
+        <div class="banner-overlay"></div>
+        <div class="banner-text">
+            <h2>Dominate the Rift with Data</h2>
+            <p>Elevate your League of Legends experience with comprehensive match analysis, 
+               detailed statistics, and pro-level insights</p>
+            <a href="https://leaguestat.streamlit.app/" class="cta-button">Launch Application</a>
         </div>
-        
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Performance Analytics</h3>
-                <p>Track your KDA, CS/min, vision score, and other key metrics across multiple matches.</p>
+    </div>
+    
+    <main>
+        <div class="container">
+            <div class="section-title">
+                <h2>What We Offer</h2>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3 class="feature-title">Item Analysis</h3>
-                <p>Discover optimal build paths with detailed item win rates and purchase timing.</p>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title">Performance Analytics</h3>
+                    <p class="feature-description">Track your KDA, CS/min, vision score, and other key metrics across multiple matches. Identify trends and improvement areas with intuitive visualizations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Item Analysis</h3>
+                    <p class="feature-description">Discover optimal build paths with detailed item win rates and purchase timing. Adapt your strategy based on real-time meta analysis.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="feature-title">Pro Comparisons</h3>
+                    <p class="feature-description">Compare your stats directly with pro players to identify improvement opportunities. Learn from the best and apply pro strategies to your gameplay.</p>
+                </div>
             </div>
             
-            <div class="feature-card">
-                <div class="feature-icon">⚔️</div>
-                <h3 class="feature-title">Pro Comparisons</h3>
-                <p>Compare your stats directly with pro players to identify improvement opportunities.</p>
+            <div class="stats-section">
+                <div class="stats-bg"></div>
+                <div class="section-title">
+                    <h2>By The Numbers</h2>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            <i class="fas fa-users"></i>50K+
+                        </div>
+                        <p class="stat-text">Active Users</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            <i class="fas fa-gamepad"></i>1M+
+                        </div>
+                        <p class="stat-text">Games Analyzed</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            <i class="fas fa-star"></i>98%
+                        </div>
+                        <p class="stat-text">User Satisfaction</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-number">
+                            <i class="fas fa-arrow-up"></i>45%
+                        </div>
+                        <p class="stat-text">Avg. Rank Improvement</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonials">
+                <div class="section-title">
+                    <h2>What Players Say</h2>
+                </div>
+                
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"LeagueStat helped me climb from Silver to Platinum in just one season. The item analysis feature is a game-changer!"</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">DJ</div>
+                            <div class="testimonial-info">
+                                <h4>DarkJungler</h4>
+                                <p>Platinum II - Jungle Main</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"Being able to compare my stats with pros helped me understand what I was doing wrong. Now I'm playing better than ever!"</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">TS</div>
+                            <div class="testimonial-info">
+                                <h4>TopSoloCarry</h4>
+                                <p>Diamond IV - Top Lane Main</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"The performance tracking tools are incredibly detailed. I can now see exactly what aspects of my game need improvement."</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">MS</div>
+                            <div class="testimonial-info">
+                                <h4>MidSlayer99</h4>
+                                <p>Gold I - Mid Lane Main</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cta-section">
+                <h2 class="cta-title">Ready to Level Up Your Game?</h2>
+                <p class="cta-description">Join thousands of players who are using LeagueStat to improve their skills and climb the ranks.</p>
+                <a href="https://leaguestat.streamlit.app/" class="cta-button">Start Analyzing Now</a>
             </div>
         </div>
     </main>
     
     <footer>
-        <p>&copy; 2025 LeagueStat | Not affiliated with Riot Games</p>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>LeagueStat</h3>
+                <p>Comprehensive League of Legends match analysis tool designed to help players of all skill levels improve their gameplay.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-twitch"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">User Guide</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">GDPR</a></li>
+                </ul>
+                <!-- Hidden but accessible verification link -->
+                <a href="https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt" class="verification-link">riot.txt</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 LeagueStat | Not affiliated with Riot Games</p>
+            <p>LeagueStat isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends.</p>
+        </div>
     </footer>
 </body>
 </html>
