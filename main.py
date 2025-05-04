@@ -11,6 +11,10 @@ import time
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
+git add static/riot.txt
+git commit -m "Add riot.txt for Riot verification"
+git push origin main
+
 # Load API Key
 load_dotenv()
 RIOT_API_KEY = st.secrets.get('RIOT_API_KEY') or os.getenv("RIOT_API_KEY")
