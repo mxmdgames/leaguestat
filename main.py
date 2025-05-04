@@ -10,6 +10,21 @@ from dotenv import load_dotenv
 import time
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+from pathlib import Path
+
+
+# Serve riot.txt directly
+def serve_riot_txt():
+    file_path = Path(__file__).parent / "static" / "riot.txt"
+    if file_path.exists():
+        with open(file_path, "r") as f:
+            st.markdown(f.read(), unsafe_allow_html=True)
+    else:
+        st.error("riot.txt not found!")
+
+if "riot.txt" in st.experimental_get_query_params().get("_filename", []):
+    serve_riot_txt()
+    st.stop()
 
 
 # Load API Key
