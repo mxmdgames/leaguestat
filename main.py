@@ -13,13 +13,14 @@ from matplotlib.patches import Patch
 from pathlib import Path
 
 if "_filename" in st.query_params and "riot.txt" in st.query_params.get("_filename", []):
-    # Use JavaScript to redirect
-    redirect_js = f"""
-    <script>
-    window.location.href = 'https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt';
-    </script>
-    """
-    st.markdown(redirect_js, unsafe_allow_html=True)
+    # Read the HTML redirect file
+    html_path = Path(__file__).parent / "riot.txt.html"
+    if html_path.exists():
+        with open(html_path, "r") as f:
+            html_content = f.read()
+        st.markdown(html_content, unsafe_allow_html=True)
+    else:
+        st.markdown('<meta http-equiv="refresh" content="0; url=https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt">', unsafe_allow_html=True)
     st.stop()
 
 # Load API Key
