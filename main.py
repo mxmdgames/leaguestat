@@ -13,19 +13,15 @@ from matplotlib.patches import Patch
 from pathlib import Path
 
 
-# Serve riot.txt directly
-def serve_riot_txt():
+# Riot.txt verification handler
+if os.path.basename(__file__) == "riot.txt" or st.query_params.get("_riot_verify"):
     file_path = Path(__file__).parent / "static" / "riot.txt"
     if file_path.exists():
         with open(file_path, "r") as f:
             st.markdown(f.read(), unsafe_allow_html=True)
+        st.stop()  # Stop normal app execution
     else:
-        st.error("riot.txt not found!")
-
-# Updated query params check
-if "riot.txt" in st.query_params.get("_filename", []):
-    serve_riot_txt()
-    st.stop()  # Don't show the rest of the app
+        st.error("riot.txt not found in static folder!")
 
 
 # Load API Key
