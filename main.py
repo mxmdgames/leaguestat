@@ -22,9 +22,10 @@ def serve_riot_txt():
     else:
         st.error("riot.txt not found!")
 
-if "riot.txt" in st.experimental_get_query_params().get("_filename", []):
+# Updated query params check
+if "riot.txt" in st.query_params.get("_filename", []):
     serve_riot_txt()
-    st.stop()
+    st.stop()  # Don't show the rest of the app
 
 
 # Load API Key
