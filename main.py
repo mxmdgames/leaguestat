@@ -1,4 +1,4 @@
-import streamlit as st
+eimport streamlit as st
 import requests
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,7 +12,15 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pathlib import Path
 
-
+if "_filename" in st.query_params and "riot.txt" in st.query_params.get("_filename", []):
+    # Use JavaScript to redirect
+    redirect_js = f"""
+    <script>
+    window.location.href = 'https://raw.githubusercontent.com/mxmdgames/leaguestat/refs/heads/main/static/riot.txt';
+    </script>
+    """
+    st.markdown(redirect_js, unsafe_allow_html=True)
+    st.stop()
 
 # Load API Key
 load_dotenv()
