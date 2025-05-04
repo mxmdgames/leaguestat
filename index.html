@@ -552,39 +552,48 @@
             opacity: 0.01;
         }
         
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul {
-                margin-top: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .banner-text h2 {
-                font-size: 2rem;
-            }
-            
-            .banner-container {
-                height: 300px;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .feature-card {
-                padding: 20px;
-            }
-            
-            .stat-number {
-                font-size: 2.5rem;
-            }
-        }
+       /* Responsive styles */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    nav ul {
+        margin-top: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .banner-text h2 {
+        font-size: 2rem;
+    }
+    
+    .banner-container {
+        height: 300px;
+        margin-bottom: 30px; /* Add space below the banner */
+    }
+    
+    .banner-text {
+        bottom: 80px; /* Move the banner text higher up */
+    }
+    
+    main {
+        padding-top: 30px; /* Add additional padding to the top of main content */
+    }
+    
+    .section-title h2 {
+        font-size: 2rem;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+}
     </style>
     
     <!-- Special route handling for riot.txt verification -->
